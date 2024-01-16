@@ -27,8 +27,7 @@ set_var() {
     _FZF="$(command -v fzf)" || command_not_found "fzf"
     _UNZIP="$(command -v unzip)" || command_not_found "unzip"
 
-    _HOST="https://www.opensubtitles.org"
-    _SEARCH_URL="$_HOST/en/search/sublanguageid-"
+    _SEARCH_URL="https://www.opensubtitles.org/en/search/sublanguageid-"
     _GOOGLE_URL="https://www.google.com/search"
     _DOWNLOAD_URL="https://dl.opensubtitles.org/en/download/sub/"
 }
