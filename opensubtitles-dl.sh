@@ -28,7 +28,6 @@ set_vars() {
     _UNZIP="$(command -v unzip)" || command_not_found "unzip"
 
     _SEARCH_URL="https://www.opensubtitles.org/en/search/sublanguageid-"
-    _GOOGLE_URL="https://www.google.com/search"
     _DOWNLOAD_URL="https://dl.opensubtitles.org/en/download/sub/"
 }
 
@@ -99,30 +98,11 @@ get_subtitle_list () {
 
 get_imdb_id() {
     # $1: media name
-    local r c ul nl len u n res
-    r="$("$_CURL" -sSL "$_GOOGLE_URL?q=${1// /+}+site%3Aimdb.com%2Ftitle" \
-        -A 'google')"
-    c="$("$_PUP" 'h3 div attr{class}' <<< "$r")"
-    ul="$("$_PUP" '#main :parent-of(:parent-of(:parent-of(h3)))' <<< "$r" \
-        | grep href \
-        | sed -E 's/.*.imdb.com\/title\/tt//;s/\/.*//')"
-    nl="$("$_PUP" '#main :parent-of(h3)' <<< "$r" \
-        | grep "$c" -A 1 \
-        | grep -v "$c" \
-        | grep -v -- '--' \
-        | awk '{$1=$1};1' \
-        | sed -E 's/&#34;/"/g;s/&#39;/'\''/g')"
-
-    len="$(wc -l <<< "$nl")"
-    res=""
-    for i in $(seq 1 "$len"); do
-        u="$(head -"$i" <<< "$ul" | tail -1)"
-        n="$(head -"$i" <<< "$nl" | tail -1)"
-        if [[ "$(grep -c "$u" <<< "$res")" != "1" ]]; then
-            res+="$u"
-            echo "[$u] $n"
-        fi
-    done
+    local resp url id
+    resp="$("$_CURL" -sSL -A 'google' "https://html.duckduckgo.com/html/?q=${1// /+}+site%3Aimdb.com%2Ftitle")"
+    url="$("$_PUP" 'div.result:nth-child(1) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > a:nth-child(2) text{}' <<< "$resp")"
+    id="$(echo "$url" | sed -z 's/\n//g; s/ //g; s#^.*title/\([a-z0-9]*\)/$#\1#')"
+    echo "$id"
 }
 
 download_subtitle() {
@@ -147,10 +127,12 @@ main() {
     set_vars
 
     [[ -z "${_INPUT_NAME:-}" ]] && print_error "Missing -n <name>!"
-    mlist="$(get_imdb_id "${_INPUT_NAME:-}")"
-    mid="$(fzf_prompt "$mlist")"
+
+    mid="$(get_imdb_id "${_INPUT_NAME:-}")"
 
     [[ -z "${mid:-}" ]] && print_error "IMDb ID not found!"
+    [[ "${mid:-}" =~ tt[0-9]{7,} ]] || print_error "expected an IMDb ID value like 'tt0113243' but received '$mid'"
+
     slist="$(get_subtitle_list "$mid")"
     if [[ -z "${_DOWNLOAD_ALL:-}" ]]; then
         sid="$(fzf_prompt "$slist")"
