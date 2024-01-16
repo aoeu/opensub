@@ -21,7 +21,7 @@ usage() {
     printf "%b\n" "$(grep '^#/' "$0" | cut -c4-)" && exit 1
 }
 
-set_var() {
+set_vars() {
     _CURL="$(command -v curl)" || command_not_found "curl"
     _PUP="$(command -v pup)" || command_not_found "pup"
     _FZF="$(command -v fzf)" || command_not_found "fzf"
@@ -154,7 +154,7 @@ fzf_prompt() {
 
 main() {
     set_args "$@"
-    set_var
+    set_vars
 
     [[ -z "${_INPUT_NAME:-}" ]] && print_error "Missing -n <name>!"
     mlist="$(get_imdb_id "${_INPUT_NAME:-}")"
