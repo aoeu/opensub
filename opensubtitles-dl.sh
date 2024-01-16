@@ -29,7 +29,7 @@ set_var() {
 
     _HOST="https://www.opensubtitles.org"
     _SEARCH_URL="$_HOST/en/search/sublanguageid-"
-    _GOOGLE_SEARCH="https://www.google.com/search"
+    _GOOGLE_URL="https://www.google.com/search"
     _DOWNLOAD_URL="https://dl.opensubtitles.org/en/download/sub/"
 }
 
@@ -111,7 +111,7 @@ get_subtitle_list () {
 get_imdb_id() {
     # $1: media name
     local r c ul nl len u n res
-    r="$("$_CURL" -sSL "$_GOOGLE_SEARCH?q=${1// /+}+site%3Aimdb.com%2Ftitle" \
+    r="$("$_CURL" -sSL "$_GOOGLE_URL?q=${1// /+}+site%3Aimdb.com%2Ftitle" \
         -A 'google')"
     c="$("$_PUP" 'h3 div attr{class}' <<< "$r")"
     ul="$("$_PUP" '#main :parent-of(:parent-of(:parent-of(h3)))' <<< "$r" \
