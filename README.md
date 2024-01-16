@@ -14,12 +14,17 @@
 
 I need a simple CLI subtitle downloader and it should work without using API key. I searched around online but didn't find a good one... Now, I have one.
 
-## Dependency
+## Dependencies
 
 - [curl](https://curl.haxx.se/download.html)
 - [pup](https://github.com/EricChiang/pup)
 - [fzf](https://github.com/junegunn/fzf)
 - [unzip](http://infozip.sourceforge.net/UnZip.html#Downloads)
+
+```
+pacman -S curl unzip fzf
+go install github.com/EricChiang/pup@latest`
+```
 
 ## How to use
 
