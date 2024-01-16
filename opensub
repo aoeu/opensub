@@ -1,0 +1,4 @@
+#!/bin/sh
+movieName=$(ls -1 | grep -E '(mkv|mp4)$' | head -1 | sed -E 's#\.(mkv|mp4)##' | sed -E 's# \([0-9]{4}\)##')
+test "" = "$movieName" && echo "mkv file not found in this directory, exiting" 1>&2 && exit 1
+opensubtitles-dl.sh -n "$movieName" -l eng
